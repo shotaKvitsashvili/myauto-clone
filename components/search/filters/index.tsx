@@ -84,12 +84,15 @@ function CarFilters({ }: Props) {
 						options={
 							categories?.data?.length
 								?
-								categories?.data?.map(({ category_id, title }) => (
-										{
-											val: category_id,
-											text: title
-										}
-									))
+								categories
+								?.data
+								?.filter(({ vehicle_types }) => vehicle_types.includes(vehicleId))
+								?.map(({ category_id, title }) => (
+									{
+										val: category_id,
+										text: title
+									}
+								))
 								:
 								[]
 						} />
