@@ -3,3 +3,8 @@ export enum VehicleEnums  {
     tractor = 1,
     motorcycle = 2
 }
+
+export enum CurrencyEnums  {
+    dollar = 1,
+    lari = 3
+}

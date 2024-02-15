@@ -11,11 +11,12 @@
   "dependencies": {
     "@tanstack/react-query": "^5.20.5",
     "axios": "^1.6.7",
+    "classnames": "^2.5.1",
     "framer-motion": "^11.0.5",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-multi-select-component": "^4.3.4",
+    "react-hook-form": "^7.50.1",
     "sass": "^1.70.0"
   },
   "devDependencies": {

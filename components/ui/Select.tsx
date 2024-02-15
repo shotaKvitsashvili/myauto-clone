@@ -1,146 +1,110 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 
 import useOutsideClick from '@/hooks/useOutsideClick';
 
-type Toption = {
-    val: string | number
-    text: string
-}
+type Option = {
+    val: string | number;
+    text: string | React.ReactNode;
+};
 
 type Props = {
-    optionType: 'checkBox'
-    options: Toption[]
-    label: string
-    topLabel?: string
-}
+    type: 'multiSelect' | 'dropDown';
+    title: string;
+    options: Option[];
+    label?: string;
+    optionType?: 'checkBox' | 'badge'; // Only required for MultiSelect
+    customContent?: React.ReactNode; // Only required for DropDown
+};
 
-const multiselectSubscringValue = 100;
+const CustomSelect: React.FC<Props> = ({ type, title, options, label, optionType, customContent }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedOption, setSelectedOption] = useState<any>(null);
+    const [selectedOptions, setSelectedOptions] = useState<Option[]>([]);
+    const [searchKey, setSearchKey] = useState<string>('');
 
-const Select = ({ options, optionType, label,topLabel }: Props) => {
-    const [isOpen, setIsOpen] = useState<boolean>(false)
-    const [selectedOptions, setSelectedOptions] = useState<Array<Toption>>([]);
-    const [searchKey, setSearchKey] = useState<string>('')
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
-    const floatingLabel = isOpen || selectedOptions.length > 0
+    useOutsideClick(containerRef, () => setIsOpen(false));
 
-    const inputRef = useRef<HTMLInputElement | null>(null)
-    const containerRef = useRef<HTMLDivElement | null>(null)
+    const handleToggle = () => {
+        setIsOpen(!isOpen);
+    };
 
-    useOutsideClick(containerRef, () => setIsOpen(false))
+    const handleOptionClick = (val: any) => {
+        type === 'dropDown' ? setSelectedOption(val) : toggleOption(val);
+        setIsOpen(false);
+    };
 
-    const optionsString = selectedOptions
-        .map((option, index) => (
-            option.text
-        ))
-        .toString().substring(0, multiselectSubscringValue)
-
-    const toggleOption = (option: Toption) => {
-        const { val, text } = option
-
+    const toggleOption = (option: Option) => {
         if (selectedOptions.includes(option)) {
-            setSelectedOptions(prev => prev.filter((item) => item.val !== val));
+            setSelectedOptions(prev => prev.filter(item => item.val !== option.val));
         } else {
             setSelectedOptions(prev => [...prev, option]);
         }
     };
 
-    useEffect(() => {
-        isOpen ? inputRef.current?.focus() : setSearchKey('')
-    }, [isOpen])
+    const renderOptions = () => {
+        return options
+            .filter(option => {
+                if (typeof option.text === 'string') {
+                    return option.text.trim().toLowerCase().includes(searchKey.trim().toLocaleLowerCase());
+                }
+                return true;
+            })
+            .map(option => {
+                const isChecked = type === 'multiSelect' ? selectedOptions.includes(option) : selectedOption === option.text;
+                return (
+                    <motion.li
+                        key={option.val}
+                        className={`${isChecked ? 'bg-[#F2F3F6] text-black-800' : 'hover:bg-[#F2F3F6] text-black-600 hover:text-black-800'
+                            } text-sm transition-all px-4 py-2 cursor-pointer`}
+                        onClick={() => handleOptionClick(option)}
+                    >
+                        {option.text}
+                    </motion.li>
+                );
+            });
+    };
 
     return (
-        <>
-        {topLabel ? <span className='text-gray-800 text-xs mb-2 inline-block'>{topLabel}</span> : <></>}
-        <div className='relative' ref={containerRef}>
-            <div onClick={() => setIsOpen(!isOpen)}>
-                <div className='relative border border-[#C2C9D8] pl-3 pr-1 rounded-md text-black-600 cursor-pointer'>
-                    <h2
-                        className={`transition-all origin-left absolute text-xs pointer-events-none ${floatingLabel ? 'top-0 scale-75' : 'top-1/2 -translate-y-1/2'}`}>
-                        {label}
-                    </h2>
-
-                    <div className='h-[40px] flex items-center'>
-                        <input
-                            className={`placeholder:text-black-600 placeholder:text-xs truncate text-black w-full !outline-none pt-4 text-xs`}
-                            type="text"
-                            readOnly={!isOpen}
-                            value={searchKey}
-                            onChange={e => setSearchKey(e.target.value)}
-                            placeholder={
-                                optionsString + (optionsString.length >= multiselectSubscringValue ? '...' : '')
-                            }
+        <div>
+            {label && <span className="text-black-800 text-xs mb-2 inline-block">{label}</span>}
+            <div className="relative" ref={containerRef}>
+                <div
+                    onClick={handleToggle}
+                    className="relative border border-[#C2C9D8] pl-3 pr-1 rounded-md text-black-600 cursor-pointer flex items-center justify-between h-[40px]"
+                >
+                    <h2 className="transition-all origin-left text-xs pointer-events-none">{selectedOption ?? title}</h2>
+                    <div className="shrink-0 w-8 h-8 rounded-full hover:bg-[#f2f3f6] transition-all flex justify-center items-center">
+                        <Image
+                            src="/icons/chevron-down.svg"
+                            alt="dropdown-arrow"
+                            width={10}
+                            height={10}
+                            className={isOpen ? 'rotate-180' : ''}
                         />
-
-                        <div className='shrink-0 w-8 h-8 rounded-full hover:bg-[#f2f3f6] transition-all flex justify-center items-center'>
-                            <Image
-                                src={selectedOptions.length ? "/icons/close.svg" : "/icons/chevron-down.svg"}
-                                alt='arrow'
-                                width={selectedOptions.length ? 18 : 10}
-                                height={selectedOptions.length ? 18 : 10}
-                                className={`${isOpen ? 'rotate-180' : ''}  object-contain object-center`}
-                                onClick={(e) => {
-                                    if (selectedOptions.length) {
-                                        e.stopPropagation()
-                                        setSelectedOptions([])
-                                    }
-                                }}
-                            />
-                        </div>
                     </div>
                 </div>
+                <AnimatePresence>
+                    {isOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ type: 'spring', duration: 0.5 }}
+                            className="absolute top-[calc(100%+10px)] mt-1 w-full left-0 bg-white shadow-[0_4px_20px_#A4AEC166] rounded-lg z-20"
+                        >
+                            <ul style={{ listStyle: 'none', padding: 0 }}>
+                                {type === 'dropDown' ? customContent : renderOptions()}
+                            </ul>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
-
-            <AnimatePresence>
-                {
-                    isOpen && <motion.div
-                        className='absolute top-[calc(100%+10px)] rounded-lg flex flex-col border border-[#D8DBE2] shadow-sm z-[9999] w-full px-2'
-                        initial={{ y: 10, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: 10, opacity: 0 }}
-                    >
-                        <div className='max-h-[310px] overflow-auto mt-2 multiselect-scroll'>
-                            {options.filter(({ text }) => text.trim().toLowerCase().includes(searchKey.trim().toLocaleLowerCase())).map((option, index) => {
-                                const isChecked = selectedOptions.includes(option)
-
-                                return optionType === 'checkBox'
-                                    ?
-                                    <label className='w-full flex items-center gap-4 cursor-pointer px-6 py-[10px] md:text-xs xl:text-sm font-medium'>
-                                        <div className={`${isChecked ? 'bg-success border-transparent' : ''} flex items-center justify-center w-[24px] h-[24px] rounded-md border shrink-0`}>
-                                            <Image
-                                                src="/icons/check.svg"
-                                                alt={option.text}
-                                                width={24}
-                                                height={24}
-                                            />
-                                        </div>
-                                        <input
-                                            type='checkbox'
-                                            onChange={() => toggleOption(option)}
-                                            checked={isChecked}
-                                            className='hidden'
-                                        />
-                                        {option.text}
-                                    </label>
-                                    :
-                                    option.text
-                            })}
-                        </div>
-                    </motion.div>
-                }
-            </AnimatePresence>
-            {/* <div>
-                <h3>Selected Options:</h3>
-                <ul>
-                    {selectedOptions.map((option, index) => (
-                        <li key={index}>{option.text}</li>
-                    ))}
-                </ul>
-            </div> */}
         </div>
-        </>
     );
 };
 
-export default Select;
+export default CustomSelect;

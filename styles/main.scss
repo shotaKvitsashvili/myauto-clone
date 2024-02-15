@@ -16,4 +16,29 @@
     }
 }
 
-@import './modules'
+@import './modules';
+
+.pricing-toggle {
+    background-color: #3FAED7;
+    padding: 14px 5px;
+    border-radius: 30px;
+    display: inline-block
+  }
+  
+  .pricing-toggle [name="pricing"] {
+    display: none
+  }
+  
+  .pricing-toggle input[type="radio"]+label {
+    background-color: #3FAED7;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .pricing-toggle input[type="radio"]:checked+label {
+    background-color: white;
+    color: #00008B;
+  }

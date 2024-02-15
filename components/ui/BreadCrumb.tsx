@@ -29,7 +29,7 @@ function BreadCrumb({ crumbs = [] }: Props) {
                     const isLast = index === arr.length - 1;
 
                     return <>
-                        <Link href={url} className={`${isLast ? 'text-primary pointer-events-none' : 'text-black-600 hover:text-gray-800'}`}>
+                        <Link href={url} className={`${isLast ? 'text-primary pointer-events-none' : 'text-black-600 hover:text-black-800'}`}>
                             {name}
                         </Link>
                         {
