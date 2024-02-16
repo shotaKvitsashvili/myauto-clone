@@ -2,15 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-    font-family: helvetica;
-    src: url('/fonts/Helvetica.ttf') format('truetype');
-}
-
-* {
-    font-family: helvetica;
-}
-
-body {
-    background-color: #F2F3F6;
+.container {
+    @apply xl:px-[20px] 2xl:px-[148px];
 }

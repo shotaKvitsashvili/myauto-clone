@@ -9,6 +9,7 @@ import { UseFormRegister } from 'react-hook-form'
 
 type Props = {
     register: UseFormRegister<TfilterTypes>
+    id: string
 }
 
 const currencyList = [
@@ -27,7 +28,7 @@ const currencyList = [
     }
 ]
 
-function PriceBox({ register }: Props) {
+function PriceBox({ register, id }: Props) {
     const { currency, updateCurrency } = useContext(Context)
 
     return (
@@ -52,7 +53,7 @@ function PriceBox({ register }: Props) {
                                     }
                                     {
                                         isActive && <motion.div
-                                            layoutId={`bg`}
+                                            layoutId={`bg-${id}`}
                                             key={id}
                                             className=" bg-black-800 left-0 top-0 h-6 w-6 rounded-full [&_svg_path]:fill-white flex justify-center items-center"
                                             transition={{ type: "spring", duration: 0.5 }}

@@ -39,22 +39,20 @@ const MultiSelect = ({ options, optionType, label, topLabel, control, name }: Pr
         ))
         .toString()
 
-        const toggleOption = (option: Toption, field: ControllerRenderProps<FieldValues, "">) => {
-            const { val, text } = option;
-            let updatedOptions: Toption[];
-        
-            if (selectedOptions.some((item) => item.val === val)) {
-                updatedOptions = selectedOptions.filter((item) => item.val !== val);
-            } else {
-                updatedOptions = [...selectedOptions, option];
-            }
-        
-            setSelectedOptions(updatedOptions);
-        
-            field.onChange(updatedOptions.map((option) => option.val));
-        };
-        
-// console.log(selectedOptions, name);console.log(selectedOptions.includes({val: '3', text: 'BMW'}));
+    const toggleOption = (option: Toption, field: ControllerRenderProps<FieldValues, "">) => {
+        const { val, text } = option;
+        let updatedOptions: Toption[];
+
+        if (selectedOptions.some((item) => item.val === val)) {
+            updatedOptions = selectedOptions.filter((item) => item.val !== val);
+        } else {
+            updatedOptions = [...selectedOptions, option];
+        }
+
+        setSelectedOptions(updatedOptions);
+
+        field.onChange(updatedOptions.map((option) => option.val));
+    };
 
 
     useEffect(() => {

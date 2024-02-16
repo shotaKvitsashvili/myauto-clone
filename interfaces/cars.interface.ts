@@ -51,7 +51,7 @@ interface ICarItems {
     tech_inspection: boolean;
     checked_for_duplicates: boolean;
     order_number: number;
-    stickers: any;
+    stickers: number;
     changable: boolean;
     auction: boolean;
     has_turbo: boolean;
@@ -102,7 +102,7 @@ interface ICarItems {
     dealerId: number | null;
     has_logo: any;
     logo_ver: any;
-    active_ads: any;
+    active_ads: number;
     dealer_title: string;
     has_predicted_price: boolean;
     pred_first_breakpoint: number;

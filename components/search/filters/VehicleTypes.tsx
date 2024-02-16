@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 
 import { VehicleEnums } from '@/enums/filters'
-import { Control, Controller } from 'react-hook-form'
+import { Control, Controller, UseFormReset } from 'react-hook-form'
+import { TfilterTypes } from '@/hooks/useCarFilteringData'
 
 const Car = dynamic(() => import('/public/icons/car.svg')) as React.FC<React.SVGProps<SVGSVGElement>>
 const Tractor = dynamic(() => import('/public/icons/Tractor.svg')) as React.FC<React.SVGProps<SVGSVGElement>>
@@ -28,12 +29,13 @@ const vehicles: Array<{ id: number, componentName: TcomponentName }> = [
 
 type Props = {
     control: Control<any>
+    reset: UseFormReset<TfilterTypes>
 }
 
-function VehicleTypes({ control }: Props) {
+function VehicleTypes({ control, reset }: Props) {
     const [vehicleId, setVehicleId] = useState<number>(0)
 
-    const setActiveVehicle = (componentName: TcomponentName): React.ReactNode => {
+    const renderActiveVehicle = (componentName: TcomponentName): React.ReactNode => {
         switch (componentName) {
             case 'car':
                 return <Car />;
@@ -46,9 +48,21 @@ function VehicleTypes({ control }: Props) {
         }
     };
 
+    useEffect(() => {
+        reset({
+            categories: [],
+            manufacturer: [],
+            priceFrom: '',
+            priceTo: '',
+            forRent: '0',
+            typeID: vehicleId.toString()
+        })
+    }, [vehicleId])
+
     return (
         <Controller
             control={control}
+            defaultValue={0}
             name='typeID'
             render={({ field }) => (
                 <div className='grid grid-cols-3 border-b border-b-gray-200'>
@@ -72,12 +86,14 @@ function VehicleTypes({ control }: Props) {
                                     duration-300
                                     even:border-x
                                     even:border-x-gray-100
+                                    first-of-type:rounded-tl-xl
+                                    last-of-type:rounded-tr-xl
                                     [&_svg]:transition-all
                                     [&_path]:transition-all
                                     ${isActive ? '[&_svg]:fill-primary [&_path]:fill-primary ' : 'bg-[#F9F9FB]'}
                                 `}
                             >
-                                {setActiveVehicle(componentName)}
+                                {renderActiveVehicle(componentName)}
 
                                 {
                                     isActive && <motion.div

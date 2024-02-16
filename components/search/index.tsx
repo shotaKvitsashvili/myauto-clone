@@ -22,31 +22,37 @@ function Search({ }: Props) {
         vehicleId,
         manufacturers,
         amount,
-        carsLoading,
+        carsFetching,
         control,
         register,
-        refetchCars
+        reset,
+        refetchCars,
+        count
     } = useCarFilteringData()
 
     return (
-        <div className='flex'>
+        <div className='flex flex-col lg:flex-row'>
             <CarFilters
                 categories={categories}
                 vehicleId={vehicleId}
                 manufacturers={manufacturers}
                 control={control}
                 register={register}
+                reset={reset}
                 refetchCars={refetchCars}
+                count={count}
             />
             <div className='flex-1'>
-                <div className='flex items-center justify-between'>
-                    <div className='flex items-center gap-1 text-black-800'>
-                        {carsLoading ? <Loader /> : amount}
+                <div className='flex lg:items-center lg:justify-between flex-col lg:flex-row px-4 lg:p-0'>
+                    <div className='flex items-center gap-1 text-black-800 my-6 lg:m-0'>
+                        {carsFetching ? <Loader /> : amount}
                         <span>განცხადება</span>
                     </div>
                     <Filters control={control} />
                 </div>
-                <CarList />
+                <div className={`${carsFetching ? 'opacity-50 pointer-events-none' : ''}`}>
+                    <CarList />
+                </div>
             </div>
         </div>
     )

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -17,9 +17,10 @@ type Props = {
     wrapperClassName?: string
     name: string
     control: Control<any>
+    onChangeFunc?: () => void
 };
 
-const DropDown: React.FC<Props> = ({ options, customContent, title, label, wrapperClassName, control, name }) => {
+const DropDown: React.FC<Props> = ({ options, customContent, title, label, wrapperClassName, control, name, onChangeFunc }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<Toption>();
 
@@ -36,9 +37,14 @@ const DropDown: React.FC<Props> = ({ options, customContent, title, label, wrapp
         setIsOpen(false);
     };
 
+    useEffect(() => {
+        (onChangeFunc && selectedOption) && onChangeFunc()
+    }, [selectedOption])
+
     return (
         <Controller
             control={control}
+            defaultValue={0}
             name={name}
             render={({ field }) => (
                 <div className={wrapperClassName ?? ''}>

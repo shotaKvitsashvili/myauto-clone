@@ -9,7 +9,7 @@ function CarList({ }: Props) {
     const { cars } = useCarFilteringData()
 
     return (
-        <div>
+        <div className='mt-4'>
             {
                 cars?.data.items.map((product) => (
                     <CarListItem car={product} />
